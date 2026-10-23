@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_contract_billing" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.contract.billing</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Retention & Advance Tab -->
+            <xpath expr="//notebook/page[@id='invoice_tab']" position="after">
+                <page id="contract_billing_tab" string="Retention &amp; Advance"
+                      invisible="move_type not in ('out_invoice', 'out_refund')">
+                    <field name="retention_lines_created" invisible="1"/>
+                    <group>
+                        <group string="Retention (Guarantee Withheld)">
+                            <field name="retention_percent" readonly="state != 'draft'"/>
+                            <field name="retention_due_date" readonly="state != 'draft'"/>
+                            <field name="retention_amount" readonly="1" widget="monetary"/>
+                        </group>
+                        <group string="Advance Recovery">
+                            <field name="advance_payment_id" readonly="state != 'draft'"
+                                   options="{'no_create': True, 'no_edit': True}"/>
+                            <field name="advance_recovery_type" readonly="state != 'draft'"
+                                   invisible="not advance_payment_id"/>
+                            <field name="advance_recovery_percent" readonly="state != 'draft'"
+                                   invisible="not advance_payment_id or advance_recovery_type != 'percent'"/>
+                            <field name="advance_recovery_amount"
+                                   readonly="state != 'draft' or advance_recovery_type == 'percent'"
+                                   invisible="not advance_payment_id" widget="monetary"/>
+                            <field name="advance_remaining" readonly="1"
+                                   invisible="not advance_payment_id" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group class="mt-4" col="4">
+                        <group colspan="2" string="Invoice Deductions Summary">
+                            <div class="o_td_label">
+                                <label for="amount_to_pay_now" string="Amount Due Now"/>
+                            </div>
+                            <div>
+                                <h3 class="text-primary font-weight-bold">
+                                    <field name="amount_to_pay_now" widget="monetary" readonly="1"/>
+                                </h3>
+                                <p class="text-muted small">
+                                    Total (incl. VAT) − Retention − Advance Recovery = Net Payable by Client
+                                </p>
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Show Amount Due Now in subtotal footer when deductions exist -->
+            <xpath expr="//field[@name='amount_residual']" position="after">
+                <field name="amount_to_pay_now" string="Amount Due Now"
+                       class="oe_subtotal_footer_separator"
+                       invisible="move_type not in ('out_invoice', 'out_refund') or (retention_percent == 0 and not advance_payment_id)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Filter on Invoice Tree/List view -->
+    <record id="view_invoice_tree_inherit_contract_billing" model="ir.ui.view">
+        <field name="name">account.invoice.list.inherit.contract.billing</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total_in_currency_signed']" position="after">
+                <field name="retention_amount" optional="show" widget="monetary"/>
+                <field name="advance_recovery_amount" optional="show" widget="monetary"/>
+                <field name="amount_to_pay_now" optional="show" widget="monetary" string="Due Now"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

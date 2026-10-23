@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Standard Invoice Document to show Retention, Advance Recovery & Amount Due Now (Req 9) -->
+    <template id="report_invoice_document_inherit_contract_billing" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='total']//table[hasclass('o_total_table')]" position="inside">
+            <t t-if="o.move_type in ('out_invoice', 'out_refund') and (o.retention_amount or o.advance_recovery_amount)">
+                <tr t-if="o.retention_amount" class="text-muted border-top">
+                    <td>
+                        <span>Less Retention (<t t-out="o.retention_percent"/>%)</span>
+                    </td>
+                    <td class="text-end">
+                        <span>- </span>
+                        <span t-field="o.retention_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+                <tr t-if="o.advance_recovery_amount" class="text-muted">
+                    <td>
+                        <span>Less Advance Recovery</span>
+                    </td>
+                    <td class="text-end">
+                        <span>- </span>
+                        <span t-field="o.advance_recovery_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+                <tr class="border-top border-bottom fw-bold fs-5 text-primary">
+                    <td>
+                        <strong>Amount to Pay Now</strong>
+                    </td>
+                    <td class="text-end">
+                        <strong t-field="o.amount_to_pay_now" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+    </template>
+</odoo>

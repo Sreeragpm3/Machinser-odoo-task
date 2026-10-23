@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Release Retention Wizard Form -->
+    <record id="view_cb_release_retention_wizard_form" model="ir.ui.view">
+        <field name="name">cb.release.retention.wizard.form</field>
+        <field name="model">cb.release.retention.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Release Retention">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Release Retention Guarantee</h2>
+                        <p class="text-muted">
+                            Transfer retained amounts from the Retention Receivable account to normal Accounts Receivable so the client can settle them.
+                        </p>
+                    </div>
+                    <group>
+                        <group string="Customer &amp; Project">
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="partner_id" options="{'no_create': True}"/>
+                            <field name="sale_order_id" options="{'no_create': True}"
+                                   invisible="not partner_id"/>
+                        </group>
+                        <group string="Release Details">
+                            <field name="release_date"/>
+                            <field name="journal_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <group string="Invoices with Retention">
+                        <field name="invoice_ids" nolabel="1" widget="many2many"
+                               invisible="not partner_id">
+                            <list decoration-muted="state == 'cancel'">
+                                <field name="name"/>
+                                <field name="invoice_date"/>
+                                <field name="amount_untaxed" widget="monetary" string="Work Done"/>
+                                <field name="retention_percent" string="Retention %"/>
+                                <field name="retention_amount" widget="monetary" string="Retention Held"/>
+                                <field name="retention_due_date" string="Handover Due Date"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="state" invisible="1"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <group col="3" class="mt-3">
+                        <group string="Retention Status">
+                            <field name="total_retention_held" widget="monetary"/>
+                            <field name="total_retention_released" widget="monetary"/>
+                            <field name="retention_balance" widget="monetary" class="font-weight-bold"/>
+                        </group>
+                        <group string="Amount to Release Now">
+                            <field name="release_amount" widget="monetary" class="font-weight-bold text-success"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_release" string="Release Retention" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_cb_release_retention_wizard" model="ir.actions.act_window">
+        <field name="name">Release Retention</field>
+        <field name="res_model">cb.release.retention.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menuitem under Accounting > Customers -->
+    <menuitem id="menu_cb_release_retention"
+              name="Release Retention"
+              action="action_cb_release_retention_wizard"
+              parent="account.menu_finance_receivables"
+              sequence="30"/>
+
+    <!-- Action Menu on Customer / Partner Form -->
+    <record id="action_partner_release_retention" model="ir.actions.act_window">
+        <field name="name">Release Retention</field>
+        <field name="res_model">cb.release.retention.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_id': active_id}</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form</field>
+    </record>
+</odoo>

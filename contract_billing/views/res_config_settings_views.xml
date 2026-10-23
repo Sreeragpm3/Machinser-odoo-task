@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_contract_billing" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.contract.billing</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Contract Billing (Retention &amp; Advances)" id="contract_billing_settings">
+                    <setting id="retention_receivable_account" string="Retention Receivable Account"
+                             help="Dedicated receivable account holding retention guarantees until project handover.">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="retention_receivable_account_id" class="col-lg-4 o_light_label"/>
+                                <field name="retention_receivable_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting id="default_retention_percent_setting" string="Default Retention %"
+                             help="Default retention percentage automatically applied to new customer invoices.">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="retention_default_percent" class="col-lg-4 o_light_label"/>
+                                <field name="retention_default_percent" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

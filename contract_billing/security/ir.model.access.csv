@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cb_release_retention_wizard_user,cb.release.retention.wizard.user,model_cb_release_retention_wizard,account.group_account_invoice,1,1,1,1
+access_cb_release_retention_wizard_manager,cb.release.retention.wizard.manager,model_cb_release_retention_wizard,account.group_account_manager,1,1,1,1
+access_cb_retention_report_wizard_user,cb.retention.report.wizard.user,model_cb_retention_report_wizard,account.group_account_invoice,1,1,1,1
+access_cb_retention_report_wizard_manager,cb.retention.report.wizard.manager,model_cb_retention_report_wizard,account.group_account_manager,1,1,1,1
